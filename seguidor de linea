@@ -1,0 +1,131 @@
+#include <DCMotor.h>
+#include <Servo.h>
+#include "Infrarrojo.h"
+
+bool interIzq = true;//variable para la interseccion. True para izquierda y False para derecha
+
+int boton = 27;
+int sensor_choque = 20;
+int sensor_choque2 = 21;
+Servo puerta; 
+Servo mezclador;
+
+Infrarrojo infraInterIzq (13, 350);
+Infrarrojo infraInterDer (11, 350);
+Infrarrojo infraExterIzq (8, 350);
+Infrarrojo infraExterDer (9, 350);
+Infrarrojo infraExternoDelDer(15, 350);
+
+DCMotor motor_izq (4, 17, 16); //rellenar con los pines
+DCMotor motor_der (5, 30, 41); //rellenar con los pines
+
+void mover_izquierda()
+{
+  motor_izq.setSpeed(-35);
+  motor_der.setSpeed(50);
+}
+void mover_derecha()
+{
+  motor_der.setSpeed(-55);
+  motor_izq.setSpeed(60);
+}
+void mover_frente()
+{
+  motor_izq.setSpeed(45);
+  motor_der.setSpeed(45);
+}
+
+void giro_izquierda()
+{
+  motor_izq.setSpeed(-35);
+  motor_der.setSpeed(50);
+  delay (1500);
+  while (infraInterIzq.lee_blanco());
+}
+
+void giro_derecha() {
+  motor_izq.setSpeed(50);
+  motor_der.setSpeed(-35);
+  delay(1500);
+  while (infraInterIzq.lee_blanco());
+}
+
+void interseccion() {
+  if (interIzq == true)
+    giro_izquierda();
+  else if (interIzq == false)
+    giro_derecha ();
+  interIzq = !interIzq;
+}
+
+void giro_atras () {
+  
+  while (infraExterIzq.lee_blanco() && infraExterDer.lee_blanco()) {
+    motor_izq.setSpeed (-50);
+    motor_der.setSpeed (0);
+    }
+    delay(500);
+    motor_izq.setSpeed (0);
+    motor_der.setSpeed (50);
+  giro_izquierda();
+}
+
+void descargar_pelotitas()
+{
+  motor_izq.setSpeed(0);
+  motor_der.setSpeed(0);
+  delay(500);
+  puerta.write(167);
+  while (true) {
+    for (int i = 0 ;i <= 180; i++){
+      mezclador.write(i);
+      }
+    for (int a = 180;a >= 0;a--){
+      mezclador.write(a);
+    
+      }
+      
+    }
+ 
+  }
+
+void seguidor() {
+  
+  if (infraExterDer.lee_negro() || infraExterIzq.lee_negro()) {
+    interseccion();
+  }
+  else if (digitalRead(sensor_choque) == LOW || digitalRead(sensor_choque2) == LOW) {
+    if  (digitalRead(boton) == LOW) {
+   descargar_pelotitas();
+   
+    }
+    else {
+    giro_atras ();
+   }
+  }
+  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_blanco()) {
+    mover_frente();
+  }
+  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_negro()) {
+    mover_izquierda();
+  }
+  else if (infraInterDer.lee_negro() && infraInterIzq.lee_blanco()) {
+    mover_derecha();
+  }
+}
+
+void setup() {
+  pinMode (sensor_choque, INPUT);
+  pinMode (sensor_choque2, INPUT);
+  pinMode (boton,INPUT);
+  Serial.begin(9600);
+  puerta.attach(52);
+  mezclador.attach(53);
+  //pinMode (boton,INPUT);
+  puerta.write(80);
+}
+void loop() { 
+  seguidor();
+}
+
+
