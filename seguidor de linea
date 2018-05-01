@@ -10,42 +10,42 @@ int sensor_choque2 = 21;
 Servo puerta; 
 Servo mezclador;
 
-Infrarrojo infraInterIzq (13, 350);
+Infrarrojo infraInterIzq (13, 350); 
 Infrarrojo infraInterDer (11, 350);
 Infrarrojo infraExterIzq (8, 350);
 Infrarrojo infraExterDer (9, 350);
-Infrarrojo infraExternoDelDer(15, 350);
+//Infrarrojo infraExternoDelDer(15, 320);
 
-DCMotor motor_izq (4, 17, 16); //rellenar con los pines
-DCMotor motor_der (5, 30, 41); //rellenar con los pines
+DCMotor motor_izq (4, 17, 16); 
+DCMotor motor_der (5, 30, 41); 
 
 void mover_izquierda()
 {
-  motor_izq.setSpeed(-35);
-  motor_der.setSpeed(50);
+  motor_izq.setSpeed(-45); 
+  motor_der.setSpeed(50);  
 }
 void mover_derecha()
 {
   motor_der.setSpeed(-55);
-  motor_izq.setSpeed(60);
+  motor_izq.setSpeed(60); 
 }
 void mover_frente()
 {
   motor_izq.setSpeed(45);
-  motor_der.setSpeed(45);
+  motor_der.setSpeed(41);
 }
 
 void giro_izquierda()
 {
-  motor_izq.setSpeed(-35);
+  motor_izq.setSpeed(-35); 
   motor_der.setSpeed(50);
   delay (1500);
   while (infraInterIzq.lee_blanco());
 }
 
 void giro_derecha() {
-  motor_izq.setSpeed(50);
-  motor_der.setSpeed(-35);
+  motor_izq.setSpeed(57);
+  motor_der.setSpeed(-38); 
   delay(1500);
   while (infraInterIzq.lee_blanco());
 }
@@ -58,17 +58,22 @@ void interseccion() {
   interIzq = !interIzq;
 }
 
-void giro_atras () {
-  
-  while (infraExterIzq.lee_blanco() && infraExterDer.lee_blanco()) {
-    motor_izq.setSpeed (-50);
-    motor_der.setSpeed (0);
-    }
-    delay(500);
-    motor_izq.setSpeed (0);
-    motor_der.setSpeed (50);
-  giro_izquierda();
-}
+void giro_atras () 
+{
+  motor_izq.setSpeed (0);
+   motor_der.setSpeed (0);
+   puerta.write (167);
+   delay(1300);
+   puerta.write(80);
+   delay(700);
+  motor_izq.setSpeed (-37);
+  motor_der.setSpeed (-37);
+  delay (600);
+
+  motor_izq.setSpeed(-55); 
+  motor_der.setSpeed(55); 
+  delay (2000);
+  }
 
 void descargar_pelotitas()
 {
@@ -121,11 +126,9 @@ void setup() {
   Serial.begin(9600);
   puerta.attach(52);
   mezclador.attach(53);
-  //pinMode (boton,INPUT);
+
   puerta.write(80);
 }
 void loop() { 
   seguidor();
 }
-
-
