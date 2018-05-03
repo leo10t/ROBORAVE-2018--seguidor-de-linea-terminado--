@@ -10,8 +10,8 @@ int sensor_choque2 = 21;
 Servo puerta; 
 Servo mezclador;
 
-Infrarrojo infraInterIzq (13, 350); 
-Infrarrojo infraInterDer (11, 350);
+Infrarrojo infraInterIzq (13, 400);//350 
+Infrarrojo infraInterDer (11, 400);//350
 Infrarrojo infraExterIzq (8, 350);
 Infrarrojo infraExterDer (9, 350);
 //Infrarrojo infraExternoDelDer(15, 320);
@@ -21,32 +21,32 @@ DCMotor motor_der (5, 30, 41);
 
 void mover_izquierda()
 {
-  motor_izq.setSpeed(-45); 
-  motor_der.setSpeed(50);  
+  motor_izq.setSpeed(-35); //50
+  motor_der.setSpeed(50);  //55
 }
 void mover_derecha()
 {
-  motor_der.setSpeed(-55);
+  motor_der.setSpeed(-55);//55
   motor_izq.setSpeed(60); 
 }
 void mover_frente()
 {
-  motor_izq.setSpeed(45);
-  motor_der.setSpeed(41);
+  motor_izq.setSpeed(42);//45
+  motor_der.setSpeed(44);//44
 }
 
 void giro_izquierda()
 {
-  motor_izq.setSpeed(-35); 
-  motor_der.setSpeed(50);
-  delay (1500);
+  motor_izq.setSpeed(-45); 
+  motor_der.setSpeed(56); 
+  delay (500);
   while (infraInterIzq.lee_blanco());
 }
 
 void giro_derecha() {
-  motor_izq.setSpeed(57);
-  motor_der.setSpeed(-38); 
-  delay(1500);
+  motor_izq.setSpeed(56);
+  motor_der.setSpeed(-48);
+  delay(500);//1500
   while (infraInterIzq.lee_blanco());
 }
 
@@ -60,7 +60,7 @@ void interseccion() {
 
 void giro_atras () 
 {
-  motor_izq.setSpeed (0);
+   motor_izq.setSpeed (0);
    motor_der.setSpeed (0);
    puerta.write (167);
    delay(1300);
@@ -70,9 +70,10 @@ void giro_atras ()
   motor_der.setSpeed (-37);
   delay (600);
 
-  motor_izq.setSpeed(-55); 
-  motor_der.setSpeed(55); 
-  delay (2000);
+  motor_izq.setSpeed(-52); 
+  motor_der.setSpeed(52); 
+  while (infraInterIzq.lee_blanco());
+  
   }
 
 void descargar_pelotitas()
@@ -132,3 +133,4 @@ void setup() {
 void loop() { 
   seguidor();
 }
+
