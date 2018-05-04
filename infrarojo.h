@@ -1,3 +1,5 @@
+//clase que simplifica el uso de los sensores Infra Rojos
+
 class Infrarrojo {  
 public:
   Infrarrojo (int p,int b); 
@@ -9,14 +11,14 @@ private:
   int blanco;
 };
 
-Infrarrojo::Infrarrojo(int p, int b)
+Infrarrojo::Infrarrojo(int p, int b) //constructor para inicializar el pin al que el sensor esta conectado y el valor de blanco
 {
   pin = p;
   blanco = b;
   pinMode(pin,INPUT);
 }
 
-bool Infrarrojo::lee_blanco()
+bool Infrarrojo::lee_blanco() 
 {
   if(analogRead(pin) >= blanco)
     return true;
@@ -29,3 +31,4 @@ bool Infrarrojo::lee_negro()
     return true;
    else return false;
 }
+
