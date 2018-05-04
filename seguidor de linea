@@ -1,3 +1,6 @@
+//Codigo de seguidor de linea para la competencia RoboRave 2018
+//Hecho por Leonardo Torres
+
 #include <DCMotor.h>
 #include <Servo.h>
 #include "Infrarrojo.h"
@@ -10,8 +13,8 @@ int sensor_choque2 = 21;
 Servo puerta; 
 Servo mezclador;
 
-Infrarrojo infraInterIzq (13, 400);//350 
-Infrarrojo infraInterDer (11, 400);//350
+Infrarrojo infraInterIzq (13, 400);
+Infrarrojo infraInterDer (11, 400);
 Infrarrojo infraExterIzq (8, 350);
 Infrarrojo infraExterDer (9, 350);
 //Infrarrojo infraExternoDelDer(15, 320);
@@ -19,70 +22,70 @@ Infrarrojo infraExterDer (9, 350);
 DCMotor motor_izq (4, 17, 16); 
 DCMotor motor_der (5, 30, 41); 
 
-void mover_izquierda()
+void mover_izquierda() //funcion de correccion hacia la izquierda
 {
-  motor_izq.setSpeed(-35); //50
-  motor_der.setSpeed(50);  //55
+  motor_izq.setSpeed(-35); 
+  motor_der.setSpeed(50);  
 }
-void mover_derecha()
+void mover_derecha() //funcion de correccion hacia la derecha
 {
-  motor_der.setSpeed(-55);//55
+  motor_der.setSpeed(-55);
   motor_izq.setSpeed(60); 
 }
-void mover_frente()
+void mover_frente() //funcion para avanzar hacia adelante
 {
-  motor_izq.setSpeed(42);//45
-  motor_der.setSpeed(44);//44
+  motor_izq.setSpeed(60);
+  motor_der.setSpeed(62);
 }
 
-void giro_izquierda()
+void giro_izquierda() //funcion utilizada para la interseccion izquierda (primera interseccion)
 {
   motor_izq.setSpeed(-45); 
   motor_der.setSpeed(56); 
   delay (500);
-  while (infraInterIzq.lee_blanco());
+  while (infraInterIzq.lee_blanco()); //la funcion se termina en el momento que el sensor interno izquierdo deje de leer blanco
 }
 
-void giro_derecha() {
+void giro_derecha() { //funcion utilizada para la interseccion derecha (segunda interseccion)
   motor_izq.setSpeed(56);
   motor_der.setSpeed(-48);
-  delay(500);//1500
+  delay(500);
   while (infraInterIzq.lee_blanco());
 }
 
-void interseccion() {
-  if (interIzq == true)
+void interseccion() { //en el momento que los dos sensores externos vean negro se llama esta funcion
+  if (interIzq == true) //en el caso que la variable interIzq sea TRUE el robot realizara la interseccion izquierda, osea la primera
     giro_izquierda();
-  else if (interIzq == false)
+  else if (interIzq == false) //en el caso que la variable interIzq sea FALSE el robot realizara la interseccion derecha, osea la segunda 
     giro_derecha ();
-  interIzq = !interIzq;
+  interIzq = !interIzq; 
 }
 
-void giro_atras () 
+void giro_atras () //funcion para que el robot de la vuelta
 {
-   motor_izq.setSpeed (0);
-   motor_der.setSpeed (0);
-   puerta.write (167);
-   delay(1300);
-   puerta.write(80);
+   motor_izq.setSpeed (0); 
+   motor_der.setSpeed (0); 
+   puerta.write (167); // el robot se detiene abre la puerta por 1300 milisegundos
+   delay(1300); 
+   puerta.write(80); 
    delay(700);
-  motor_izq.setSpeed (-37);
-  motor_der.setSpeed (-37);
-  delay (600);
+   motor_izq.setSpeed (-37);
+   motor_der.setSpeed (-37);
+   delay (600); // el robot cierrra la puerta y retrocede por 600 milisegundos
 
-  motor_izq.setSpeed(-52); 
-  motor_der.setSpeed(52); 
-  while (infraInterIzq.lee_blanco());
+   motor_izq.setSpeed(-52); 
+   motor_der.setSpeed(52); 
+   while (infraInterIzq.lee_blanco()); //el robot realizara un giro sobre su mismo eje hasta que el sensor interno izquierdo deje de leer blanco y luego vuelve a seguidor
   
   }
 
-void descargar_pelotitas()
+void descargar_pelotitas() //funcion para descargar pelotitas
 {
-  motor_izq.setSpeed(0);
+  motor_izq.setSpeed(0); //el robot se detiene
   motor_der.setSpeed(0);
   delay(500);
-  puerta.write(167);
-  while (true) {
+  puerta.write(167); //la puerta de la caja se abre
+  while (true) { //este while permite el movimiento del mezclador interno de la caja, que se detiene solo cuando se apaga el robot
     for (int i = 0 ;i <= 180; i++){
       mezclador.write(i);
       }
@@ -97,25 +100,25 @@ void descargar_pelotitas()
 
 void seguidor() {
   
-  if (infraExterDer.lee_negro() || infraExterIzq.lee_negro()) {
+  if (infraExterDer.lee_negro() || infraExterIzq.lee_negro()) { //cuando cualquiera de los dos infrarojos externos lean negro llama a la funcion interseccion
     interseccion();
   }
-  else if (digitalRead(sensor_choque) == LOW || digitalRead(sensor_choque2) == LOW) {
-    if  (digitalRead(boton) == LOW) {
-   descargar_pelotitas();
+  else if (digitalRead(sensor_choque) == LOW || digitalRead(sensor_choque2) == LOW) { 
+    if  (digitalRead(boton) == LOW) { //en el caso que se oulse cualquiera de los sensores de choque y el boton este en LOW, se descargan pelotitas
+   descargar_pelotitas();               
    
     }
     else {
-    giro_atras ();
+    giro_atras (); //sino que el robot haga el giro y vuelva
    }
   }
-  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_blanco()) {
+  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_blanco()) { //en el caso que los dos internos lean blanco, que se mueva hacia el frente
     mover_frente();
   }
-  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_negro()) {
+  else if (infraInterDer.lee_blanco() && infraInterIzq.lee_negro()) { //en el caso que el sensor interno derecho lea blanco y el izquierdo lea negro, que se corrija hacia la izquierda
     mover_izquierda();
   }
-  else if (infraInterDer.lee_negro() && infraInterIzq.lee_blanco()) {
+  else if (infraInterDer.lee_negro() && infraInterIzq.lee_blanco()) { //en el caso que el sensor interno izquierdo lea blanco y el izquierdo lea negro, que se corrija hacia la derecha
     mover_derecha();
   }
 }
@@ -124,11 +127,10 @@ void setup() {
   pinMode (sensor_choque, INPUT);
   pinMode (sensor_choque2, INPUT);
   pinMode (boton,INPUT);
-  Serial.begin(9600);
-  puerta.attach(52);
+  puerta.attach(52); 
   mezclador.attach(53);
 
-  puerta.write(80);
+  puerta.write(80); //se declara en el setup el valor de la puerta cerrada
 }
 void loop() { 
   seguidor();
