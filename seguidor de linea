@@ -19,8 +19,8 @@ Infrarrojo infraExterIzq (8, 350);
 Infrarrojo infraExterDer (9, 350);
 //Infrarrojo infraExternoDelDer(15, 320);
 
-DCMotor motor_izq (4, 17, 16); 
-DCMotor motor_der (5, 30, 41); 
+DCMotor motor_der (4, 17, 16); 
+DCMotor motor_izq (5, 30, 41); 
 
 void mover_izquierda() //funcion de correccion hacia la izquierda
 {
@@ -29,21 +29,27 @@ void mover_izquierda() //funcion de correccion hacia la izquierda
 }
 void mover_derecha() //funcion de correccion hacia la derecha
 {
-  motor_der.setSpeed(-55);
-  motor_izq.setSpeed(60); 
+  motor_der.setSpeed(-35);
+  motor_izq.setSpeed(50); 
 }
 void mover_frente() //funcion para avanzar hacia adelante
 {
-  motor_izq.setSpeed(60);
-  motor_der.setSpeed(62);
+  motor_izq.setSpeed(48);
+  motor_der.setSpeed(55);
 }
 
 void giro_izquierda() //funcion utilizada para la interseccion izquierda (primera interseccion)
 {
+  motor_izq.setSpeed(0);
+  motor_der.setSpeed(0);
+  delay (400);
+  motor_izq.setSpeed(48);
+  motor_der.setSpeed(50);
+  delay (200)
+  while (!infraInterIzq.lee_blanco() && !infraInterDer.lee_blanco() && !infraExterIzq.lee_blanco() && !infraExterDer.lee_blanco());//la funcion se termina en el momento que el sensor interno izquierdo deje de leer blanco
   motor_izq.setSpeed(-45); 
   motor_der.setSpeed(56); 
   delay (500);
-  while (infraInterIzq.lee_blanco()); //la funcion se termina en el momento que el sensor interno izquierdo deje de leer blanco
 }
 
 void giro_derecha() { //funcion utilizada para la interseccion derecha (segunda interseccion)
